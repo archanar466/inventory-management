@@ -2,6 +2,7 @@
   <div class="language-switcher">
     <button
       class="language-button"
+      :class="{ collapsed }"
       @click="toggleDropdown"
       @blur="handleBlur"
     >
@@ -30,7 +31,7 @@
       </svg>
     </button>
 
-    <div v-if="isDropdownOpen" class="dropdown-menu">
+    <div v-if="isDropdownOpen" class="dropdown-menu" :class="{ 'collapsed-anchor': collapsed }">
       <button
         v-for="locale in availableLocales"
         :key="locale"
@@ -59,6 +60,13 @@ import { ref } from 'vue'
 import { useI18n } from '../composables/useI18n'
 
 const { currentLocale, setLocale, availableLocales, localeName } = useI18n()
+
+defineProps({
+  collapsed: {
+    type: Boolean,
+    default: false
+  }
+})
 
 const isDropdownOpen = ref(false)
 
@@ -113,6 +121,16 @@ const selectLanguage = (locale) => {
   border-color: #cbd5e1;
 }
 
+.language-button.collapsed {
+  padding: 0.5rem;
+  justify-content: center;
+}
+
+.language-button.collapsed .language-label,
+.language-button.collapsed .chevron {
+  display: none;
+}
+
 .globe-icon {
   color: #64748b;
   flex-shrink: 0;
@@ -134,8 +152,9 @@ const selectLanguage = (locale) => {
 
 .dropdown-menu {
   position: absolute;
-  top: calc(100% + 0.5rem);
-  right: 0;
+  bottom: calc(100% + 0.5rem);
+  left: 0;
+  right: auto;
   min-width: 160px;
   background: white;
   border: 1px solid #e2e8f0;
@@ -143,6 +162,11 @@ const selectLanguage = (locale) => {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   overflow: hidden;
+}
+
+.dropdown-menu.collapsed-anchor {
+  left: 0;
+  right: auto;
 }
 
 .dropdown-item {
