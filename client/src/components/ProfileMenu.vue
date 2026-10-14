@@ -2,6 +2,7 @@
   <div class="profile-menu">
     <button
       class="profile-button"
+      :class="{ collapsed }"
       @click="toggleDropdown"
       @blur="handleBlur"
     >
@@ -21,7 +22,7 @@
       </svg>
     </button>
 
-    <div v-if="isDropdownOpen" class="dropdown-menu">
+    <div v-if="isDropdownOpen" class="dropdown-menu" :class="{ 'collapsed-anchor': collapsed }">
       <div class="dropdown-header">
         <div class="avatar-large">
           {{ getInitials(currentUser.name) }}
@@ -81,6 +82,13 @@ import { useI18n } from '../composables/useI18n'
 const { currentUser, logout, getInitials } = useAuth()
 const { t } = useI18n()
 
+defineProps({
+  collapsed: {
+    type: Boolean,
+    default: false
+  }
+})
+
 const isDropdownOpen = ref(false)
 const emit = defineEmits(['show-profile-details', 'show-tasks'])
 
@@ -138,6 +146,16 @@ const handleLogout = () => {
   border-color: #cbd5e1;
 }
 
+.profile-button.collapsed {
+  padding: 0.5rem;
+  justify-content: center;
+}
+
+.profile-button.collapsed .profile-name,
+.profile-button.collapsed .chevron {
+  display: none;
+}
+
 .avatar {
   width: 32px;
   height: 32px;
@@ -169,8 +187,9 @@ const handleLogout = () => {
 
 .dropdown-menu {
   position: absolute;
-  top: calc(100% + 0.5rem);
-  right: 0;
+  bottom: calc(100% + 0.5rem);
+  left: 0;
+  right: auto;
   min-width: 280px;
   background: white;
   border: 1px solid #e2e8f0;
@@ -178,6 +197,11 @@ const handleLogout = () => {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   overflow: hidden;
+}
+
+.dropdown-menu.collapsed-anchor {
+  left: 0;
+  right: auto;
 }
 
 .dropdown-header {
